@@ -160,18 +160,3 @@ rpc_remote::~rpc_remote()
   }
 }
 
-//=====transmission logging==========
-int TransmissionLogging(Database& connection, string &user, string &pwd)
-{
-  int stat = mysql_query( &connection.mysql_connection, "SELECT * FROM user\0");
-  if( stat )throw std::runtime_error( "Query failed(transmission account)." );
-  MYSQL_RES *res = mysql_use_result( &connection.mysql_connection );
-  MYSQL_ROW row;
-  if( row = mysql_fetch_row( res ) )
-  {
-    user = string( row[0] );
-    pwd  = string( row[1] );
-  }else throw std::runtime_error( "Failed to get the transmission account" );
-  return 0;
-
-}

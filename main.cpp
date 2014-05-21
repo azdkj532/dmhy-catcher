@@ -21,6 +21,7 @@ int main(int argc, char** argv)
   Database::ModifyOption( Database::HOST, string("localhost"));
   Database::ModifyOption( Database::DATABASE, string("dmhy_catcher"));
 #ifndef _DEBUG_
+  /*
   Database transmission;
   transmission.MYSQLconnect();
   string user(""), pwd("");
@@ -28,6 +29,7 @@ int main(int argc, char** argv)
   rpc_remote::SetValue( rpc_remote::USERNAME, user);
   rpc_remote::SetValue( rpc_remote::PASSWORD, pwd );
   rpc_remote::SetValue( rpc_remote::URL, "localhost:9091/transmission/rpc");
+  */
 #endif
   Log start;
   start.insert( Log::ADD, "Program Started");

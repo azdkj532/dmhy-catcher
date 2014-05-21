@@ -20,12 +20,13 @@
 #define DATABASE_H
 
 #include <string>
-#include <mysql/mysql.h>
+#include <mysql++.h>
 
 using std::string;
 
 class Database
 {
+  friend int TransmissionLogging(Database& connection, string &user, string &pwd);
   public:
     Database();
     ~Database();
@@ -34,11 +35,12 @@ class Database
       USERNAME, PASSWORD, HOST, DATABASE
     };
     static int ModifyOption( Option op, string target );
-//  protected:
-    int MYSQLconnect();
-    MYSQL mysql_connection;
+  protected:
+    mysqlpp::Query MYSQLconnect();
+    mysqlpp::Connection connectionSettings;
   private:
     static string d_username, d_password, d_host, d_database_name;
+    bool connected;
 };
 class Log : private Database
 {
@@ -62,6 +64,9 @@ class Task : private Database
 	int ReturnTask( int &tid, string &title, string &keyword);
 	int GetTask();
 	private:
-		MYSQL_RES *task_res;
+		mysqlpp::StoreQueryResult d_task_res;
+		mysqlpp::Row::size_type d_nowRead;
 };
+int TransmissionLogging( Database &connection, string &user, string &pwd);
+
 #endif // DATABASE_H

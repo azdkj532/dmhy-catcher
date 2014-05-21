@@ -26,6 +26,7 @@ int GetSearchingTask()
     dmhy d( tid, title, keywords );
     std::cout << "Now processing: " << title << std::endl;
     std::cout << "keywords: " << keywords << std::endl;
+
     d.AnalizeSearchPage( );
     sleep(30);
   }
@@ -95,6 +96,7 @@ int DMHYResource::Search( ContentType type )
 int DMHYResource::Add()
 {
   std::cout << "Get: " << d_title << std::endl;
+/*
 //Add the torrent resource to database
 
   History resource;
@@ -121,7 +123,7 @@ int DMHYResource::Add()
 	log.insert(Log::ADD, ("Successed to add mission,"+d_title+", to transmission"));
 	return 0;
   }
-
+*/
 }
 int DMHYResource::ModifyContent(DMHYResource::ContentType type, string target)
 {

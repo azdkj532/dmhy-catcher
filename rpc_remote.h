@@ -72,6 +72,5 @@ class rpc_remote
 
 };
 static size_t writefunction( char *ptr, size_t size, size_t nmemb,void *stream);
-int TransmissionLogging( Database &connection, string &user, string &pwd);
 
 #endif // RPC_REMOTE_H
