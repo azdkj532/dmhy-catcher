@@ -1,5 +1,5 @@
-#ifndef DMHY
-#define DMHY
+#ifndef _Dmhy_H_
+#define _Dmhy_H_
 
 #include "html_source.h"
 #include "database.h"
@@ -8,11 +8,11 @@
 #include <fstream>
 #include <vector>
 
-class DMHYResource:  private html_source
+class DmhyResource:  private html_source
 {
   public:
     enum ContentType{  TID, TITLE, MAGNET, INFO_HASH, URL, TASK_TITLE };
-    DMHYResource():html_source(), d_individual_page(""), d_title(""), d_magnet(""), d_info_hash(""), d_url(""), d_task_title("") {}
+    DmhyResource():html_source(), d_individual_page(""), d_title(""), d_magnet(""), d_info_hash(""), d_url(""), d_task_title("") {}
     int Search( ContentType type);
     int Add();
     int ModifyContent( ContentType type, string target );
@@ -26,10 +26,10 @@ class DMHYResource:  private html_source
     int GetIndividualPage();
 };
 
-class dmhy :protected html_source
+class Dmhy :protected html_source
 {
   public:
-    dmhy(int task_id, std::string title,std::string key):tid(task_id), alias(title), keywords(key){}
+    Dmhy(int task_id, std::string title,std::string key):tid(task_id), alias(title), keywords(key){}
     int AnalizeSearchPage( );
   private:
     int tid;

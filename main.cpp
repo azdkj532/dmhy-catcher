@@ -26,9 +26,9 @@ int main(int argc, char** argv)
   transmission.MYSQLconnect();
   string user(""), pwd("");
   TransmissionLogging( transmission, user, pwd );
-  rpc_remote::SetValue( rpc_remote::USERNAME, user);
-  rpc_remote::SetValue( rpc_remote::PASSWORD, pwd );
-  rpc_remote::SetValue( rpc_remote::URL, "localhost:9091/transmission/rpc");
+  rpcRemote::SetValue( rpc_remote::USERNAME, user);
+  rpcRemote::SetValue( rpc_remote::PASSWORD, pwd );
+  rpcRemote::SetValue( rpc_remote::URL, "localhost:9091/transmission/rpc");
   */
 #endif
   Log start;
@@ -50,13 +50,13 @@ int main(int argc, char** argv)
 }
 void singleadd( string topic)
 {
-	DMHYResource individual_resource;
-	individual_resource.ModifyContent( DMHYResource::URL,topic);
-	individual_resource.ModifyContent( DMHYResource::TITLE, topic);
-	individual_resource.ModifyContent( DMHYResource::TASK_TITLE, "");
-	individual_resource.ModifyContent( DMHYResource::TID, 0);
+	DmhyResource individualResource;
+	individualResource.ModifyContent( DmhyResource::URL,topic);
+	individualResource.ModifyContent( DmhyResource::TITLE, topic);
+	individualResource.ModifyContent( DmhyResource::TASK_TITLE, "");
+	individualResource.ModifyContent( DmhyResource::TID, 0);
 
 	std::cout << "prepare to add magnet" << std::endl;
-	if( !individual_resource.GetTorrentLink() )//go to identical page to get the magnet link
-		individual_resource.Add();//add to database
+	if( !individualResource.GetTorrentLink() )//go to identical page to get the magnet link
+		individualResource.Add();//add to database
 }

@@ -14,20 +14,20 @@ using std::string;
 int GetSearchingTask()
 {
 
-  Task search_task;
+  Task searchTask;
 
-  search_task.GetTask();
+  searchTask.GetTask();
 
   string keywords, title;
 
   int tid;
-  while( search_task.ReturnTask(tid, title ,keywords) )
+  while( searchTask.ReturnTask(tid, title ,keywords) )
   {
-    dmhy d( tid, title, keywords );
+    Dmhy task( tid, title, keywords );
     std::cout << "Now processing: " << title << std::endl;
     std::cout << "keywords: " << keywords << std::endl;
 
-    d.AnalizeSearchPage( );
+    task.AnalizeSearchPage( );
     sleep(30);
   }
   return 0;
@@ -35,7 +35,7 @@ int GetSearchingTask()
 
 //==dmhy==================================================
 
-int dmhy::AnalizeSearchPage( )
+int Dmhy::AnalizeSearchPage( )
 {
   std::stringstream *bodyfile = new std::stringstream;
   target_url = "http://share.dmhy.org/topics/list?keyword=" + keywords;
@@ -61,13 +61,13 @@ int dmhy::AnalizeSearchPage( )
 
       std::cout << title << std::endl;
 
-      DMHYResource individual_resource;
-      individual_resource.ModifyContent( DMHYResource::URL,("http://share.dmhy.org"+ tmp.substr(head, length)));
-      individual_resource.ModifyContent( DMHYResource::TITLE, title);
-      individual_resource.ModifyContent( DMHYResource::TASK_TITLE, alias);
-      individual_resource.ModifyContent( DMHYResource::TID, tid);
+      DmhyResource individual_resource;
+      individual_resource.ModifyContent( DmhyResource::URL,("http://share.dmhy.org"+ tmp.substr(head, length)));
+      individual_resource.ModifyContent( DmhyResource::TITLE, title);
+      individual_resource.ModifyContent( DmhyResource::TASK_TITLE, alias);
+      individual_resource.ModifyContent( DmhyResource::TID, tid);
 	  
-      if( !individual_resource.Search( DMHYResource::TITLE) )
+      if( !individual_resource.Search( DmhyResource::TITLE) )
       {
         std::cout << "prepare to add magnet" << std::endl;
         if( !individual_resource.GetTorrentLink() )//go to identical page to get the magnet link
@@ -80,8 +80,8 @@ int dmhy::AnalizeSearchPage( )
 return 0;
 }
 
-//=======DMHYResource========
-int DMHYResource::Search( ContentType type )
+//=======DmhyResource========
+int DmhyResource::Search( ContentType type )
 {
   History resource;
   switch( type )
@@ -93,7 +93,7 @@ int DMHYResource::Search( ContentType type )
     default: return 0;
   }
 }
-int DMHYResource::Add()
+int DmhyResource::Add()
 {
   std::cout << "Get: " << d_title << std::endl;
 /*
@@ -125,7 +125,7 @@ int DMHYResource::Add()
   }
 */
 }
-int DMHYResource::ModifyContent(DMHYResource::ContentType type, string target)
+int DmhyResource::ModifyContent(DmhyResource::ContentType type, string target)
 {
 
   //modify the property of the resource such as title, magnet,etc.
@@ -143,18 +143,16 @@ int DMHYResource::ModifyContent(DMHYResource::ContentType type, string target)
     case URL:
       d_url = target;
       return 0;
+    case TASK_TITLE:
+      d_task_title = target;
+      return 0;
 
-	case TASK_TITLE:
-
-	  d_task_title = target;
-
-	  return 0;
     default:
       return 1;
   }
 }
 
-int DMHYResource::ModifyContent(DMHYResource::ContentType type, int target)
+int DmhyResource::ModifyContent( DmhyResource::ContentType type, int target)
 {
   switch( type )
   {
@@ -166,7 +164,7 @@ int DMHYResource::ModifyContent(DMHYResource::ContentType type, int target)
   }
 }
 
-int DMHYResource::GetIndividualPage()
+int DmhyResource::GetIndividualPage()
 {
   std::stringstream bodyfile ;
   HTTPGET( d_url , &bodyfile);//send a http get method and store respones in bodyfile
@@ -177,11 +175,11 @@ int DMHYResource::GetIndividualPage()
   return 0;
 }
 
-int DMHYResource::GetInfo_hash()
+int DmhyResource::GetInfo_hash()
 {
 }
 
-int DMHYResource::GetTorrentLink()
+int DmhyResource::GetTorrentLink()
 {
   GetIndividualPage();
   unsigned long long int length =0, head = d_individual_page.find("magnet:");
