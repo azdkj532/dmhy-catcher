@@ -36,11 +36,10 @@ class Database
     };
     static int ModifyOption( Option op, string target );
   protected:
-    mysqlpp::Query MYSQLconnect();
-    mysqlpp::Connection connectionSettings;
+    mysqlpp::Query MysqlConnect();
+    mysqlpp::Connection d_connectionSettings;
   private:
     static string d_username, d_password, d_host, d_database_name;
-    bool connected;
 };
 class Log : private Database
 {

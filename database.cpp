@@ -30,17 +30,16 @@
 string  Database::d_username, Database::d_password, Database::d_host, Database::d_database_name;
 Database::Database()
 {
-	connected = false;
 }
 Database::~Database()
 {
-	if( connectionSettings.connected() )connectionSettings.disconnect();
+	if( d_connectionSettings.connected() )d_connectionSettings.disconnect();
 }
-mysqlpp::Query Database::MYSQLconnect()
+mysqlpp::Query Database::MysqlConnect()
 {
-  connectionSettings.connect( d_database_name.c_str(), "127.0.0.1", d_username.c_str(), d_password.c_str() );
-  if( !connectionSettings.connected() ) throw std::runtime_error("failed to connect the Database");
-  mysqlpp::Query mysql_connection = connectionSettings.query();
+  d_connectionSettings.connect( d_database_name.c_str(), "127.0.0.1", d_username.c_str(), d_password.c_str() );
+  if( !d_connectionSettings.connected() ) throw std::runtime_error("failed to connect the Database");
+  mysqlpp::Query mysql_connection = d_connectionSettings.query();
   mysql_connection <<  "SET NAMES utf8";
   mysql_connection.execute();
   return mysql_connection;
@@ -70,36 +69,36 @@ int Database::ModifyOption(Database::Option op, string target)
 
 int Log::insert(stat statement, string content)
 {
-  mysqlpp::Query sqlQuery = MYSQLconnect();
-  sqlQuery << "INSERT INTO `log` ( `type`, `content`) VALUES( ";
+  mysqlpp::Query sql_query = MysqlConnect();
+  sql_query << "INSERT INTO `log` ( `type`, `content`) VALUES( ";
   switch( statement )
   {
     case ADD :
-      sqlQuery << "'info', ";
+      sql_query << "'info', ";
       break;
     case WARN :
-      sqlQuery << "'warning', ";
+      sql_query << "'warning', ";
       break;
     default:
       throw std::runtime_error("error statement of adding log");
   }
-  sqlQuery << "'" << content << "') ";
-  mysqlpp::StoreQueryResult stats = sqlQuery.store();
+  sql_query << "'" << content << "') ";
+  mysqlpp::StoreQueryResult stats = sql_query.store();
   if( stats )puts("Warning: Failed to add a log");
 }
 //=============history===============
 int History::insert(int tid, string title, string magnet)
 {
   string title_hash = sha256(title);
-  mysqlpp::Query sqlQuery = MYSQLconnect();
-  sqlQuery << "INSERT INTO `resource` ( `task_id`, `title`, `title_hash`,  `magnet`) ";
-  sqlQuery << "VALUES (";
-  sqlQuery << "'" << tid << "',";
-  sqlQuery << "'" << title << "',";
-  sqlQuery << "'" << title_hash << "',";
-  sqlQuery << "'" << magnet << "')";
+  mysqlpp::Query sql_query = MysqlConnect();
+  sql_query << "INSERT INTO `resource` ( `task_id`, `title`, `title_hash`,  `magnet`) ";
+  sql_query << "VALUES (";
+  sql_query << "'" << tid << "',";
+  sql_query << "'" << title << "',";
+  sql_query << "'" << title_hash << "',";
+  sql_query << "'" << magnet << "')";
 
-  mysqlpp::StoreQueryResult flag = sqlQuery.store();
+  mysqlpp::StoreQueryResult flag = sql_query.store();
   Log log;
   if( flag )
   {
@@ -110,29 +109,29 @@ int History::insert(int tid, string title, string magnet)
     log.insert(Log::ADD, ("Successed to add the mission, \"" + title + "\", to database") );
     return 0;
   }
-  sqlQuery.reset();
+  sql_query.reset();
 }
 
 int History::search(int type, string target)
 {
-  mysqlpp::Query sqlQuery = MYSQLconnect();
-  sqlQuery << "SELECT * FROM resource WHERE ";
+  mysqlpp::Query sql_query = MysqlConnect();
+  sql_query << "SELECT * FROM resource WHERE ";
   switch( type )
   {
     case TITLE:
-      sqlQuery << "`title_hash`  LIKE ";
+      sql_query << "`title_hash`  LIKE ";
       target = sha256(target);
       break;
     case MAGNET:
-      sqlQuery << "`magnet` LIKE ";
+      sql_query << "`magnet` LIKE ";
       break;
     default:
       return 2;
   }
-  sqlQuery << "'%" << target << "%'";
-  mysqlpp::StoreQueryResult res = sqlQuery.store();
+  sql_query << "'%" << target << "%'";
+  mysqlpp::StoreQueryResult res = sql_query.store();
   if(!res )throw std::runtime_error(("query failed at searching resource, "+target).c_str()) ;
-  sqlQuery.reset();
+  sql_query.reset();
 
   if( res.num_rows() != 0 )
   {
@@ -147,15 +146,15 @@ int History::search(int type, string target)
 int Task::GetTask( )
 {
 
-  mysqlpp::Query sqlQuery = MYSQLconnect();
-  sqlQuery <<" SELECT * FROM task WHERE `statement`=1";
-  mysqlpp::StoreQueryResult resultOfTask = sqlQuery.store();
-  sqlQuery.reset();
+  mysqlpp::Query sql_query = MysqlConnect();
+  sql_query <<" SELECT * FROM task WHERE `statement`=1";
+  mysqlpp::StoreQueryResult resultOfTask = sql_query.store();
+  sql_query.reset();
   if( resultOfTask )
   {
 	  d_task_res = resultOfTask;
 	  d_nowRead = 0;
-  }else throw std::runtime_error("Failed to get the task" + string(sqlQuery.error()) );
+  }else throw std::runtime_error("Failed to get the task" + string(sql_query.error()) );
 
   return 0;
 }
@@ -182,7 +181,7 @@ int Task::ReturnTask( int &tid, string &title, string &keywords )
 int TransmissionLogging(Database& connection, string &user, string &pwd)
 {
 	Database account;
-	mysqlpp::Query sqlQuery =account.MYSQLconnect();
+	mysqlpp::Query sqlQuery =account.MysqlConnect();
 
 	sqlQuery << "SELECT * FROM user\0";
 	mysqlpp::StoreQueryResult result= sqlQuery.store();
