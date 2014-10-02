@@ -70,9 +70,9 @@ int dmhy::AnalizeSearchPage( )
       {
         std::cout << "prepare to add magnet" << std::endl;
         if( !individual_resource.GetTorrentLink() )//go to identical page to get the magnet link
-		{
-		  individual_resource.Add();//add to database
-		}
+	{
+	  individual_resource.Add();//add to database
+	}
       }
     }
   }
